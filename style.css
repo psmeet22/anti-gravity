@@ -143,6 +143,39 @@ body {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
+/* Action Buttons */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.btn-edit {
+  color: var(--primary-color);
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.btn-edit:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-delete {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-delete:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
 /* Responsive Fixes */
 @media (max-width: 768px) {
   .navbar-brand { font-size: 1.25rem; }

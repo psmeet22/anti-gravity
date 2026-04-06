@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCountEl = document.getElementById('totalCount');
     const avgSalaryEl = document.getElementById('avgSalary');
     const toastContainer = document.getElementById('toastContainer');
+    const editSalaryModal = new bootstrap.Modal(document.getElementById('editSalaryModal'));
+    const editSalaryForm = document.getElementById('editSalaryForm');
+    const editEmpIdInput = document.getElementById('editEmpId');
+    const editEmpNameDisplay = document.getElementById('editEmpNameDisplay');
+    const editEmpSalaryInput = document.getElementById('editEmpSalary');
 
     // 🚀 3. Initial Load
     renderEmployees();
@@ -75,6 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployees();
     });
 
+    // 🏗️ 4.1 Edit Salary Logic
+    editSalaryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const empId = editEmpIdInput.value;
+        const newSalary = parseFloat(editEmpSalaryInput.value);
+
+        if (isNaN(newSalary) || newSalary <= 0) {
+            showToast("Please enter a valid salary amount.", "error");
+            return;
+        }
+
+        const empIndex = employees.findIndex(emp => emp.id === empId);
+        if (empIndex !== -1) {
+            employees[empIndex].salary = newSalary;
+            showToast(`Updated salary for ${employees[empIndex].name} to $${newSalary.toLocaleString()}`, 'success');
+            editSalaryModal.hide();
+            renderEmployees();
+        }
+    });
+
     // 🖥️ 5. Render Functions
     function renderEmployees() {
         tableBody.innerHTML = '';
@@ -103,12 +128,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>
                         <div class="d-flex flex-column">
                             <span class="fw-semibold">${emp.name}</span>
-                            <span class="text-muted small">$${emp.salary} Monthly</span>
+                            <span class="text-muted small">$${emp.salary.toLocaleString()} Monthly</span>
                         </div>
                     </td>
                     <td><span class="text-secondary">${currencyFormatter.format(emp.salary)}</span></td>
                     <td>
                         <span class="badge-gender badge-${emp.gender.toLowerCase()}">${emp.gender}</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn-action btn-edit" onclick="window.prepareEditSalary('${emp.id}')" title="Edit Salary">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="window.deleteEmployee('${emp.id}')" title="Delete Employee">
+                                <i class="fas fa-trash-can"></i>
+                            </button>
+                        </div>
                     </td>
                 `;
                 tableBody.appendChild(tr);
@@ -117,6 +152,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateStats();
     }
+
+    // 🏗️ 5.1 Global Action Handlers (Exposure for Click Events)
+    window.prepareEditSalary = (id) => {
+        const emp = employees.find(e => e.id === id);
+        if (emp) {
+            editEmpIdInput.value = emp.id;
+            editEmpNameDisplay.textContent = emp.name;
+            editEmpSalaryInput.value = emp.salary;
+            editSalaryModal.show();
+        }
+    };
+
+    window.deleteEmployee = (id) => {
+        const emp = employees.find(e => e.id === id);
+        if (emp && confirm(`Are you sure you want to delete ${emp.name}?`)) {
+            employees = employees.filter(e => e.id !== id);
+            showToast(`Employee ${emp.name} removed successfully!`, 'success');
+            renderEmployees();
+        }
+    };
 
     // 📊 6. Stats Management
     function updateStats() {
