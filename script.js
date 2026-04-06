@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCountEl = document.getElementById('totalCount');
     const avgSalaryEl = document.getElementById('avgSalary');
     const toastContainer = document.getElementById('toastContainer');
-    const editSalaryModal = new bootstrap.Modal(document.getElementById('editSalaryModal'));
-    const editSalaryForm = document.getElementById('editSalaryForm');
+    const editEmployeeModal = new bootstrap.Modal(document.getElementById('editSalaryModal'));
+    const editEmployeeForm = document.getElementById('editEmployeeForm');
     const editEmpIdInput = document.getElementById('editEmpId');
-    const editEmpNameDisplay = document.getElementById('editEmpNameDisplay');
+    const editEmpNameInput = document.getElementById('editEmpName');
     const editEmpSalaryInput = document.getElementById('editEmpSalary');
 
     // 🚀 3. Initial Load
@@ -80,22 +80,33 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployees();
     });
 
-    // 🏗️ 4.1 Edit Salary Logic
-    editSalaryForm.addEventListener('submit', (e) => {
+    // 🏗️ 4.1 Edit Employee Logic
+    editEmployeeForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const empId = editEmpIdInput.value;
-        const newSalary = parseFloat(editEmpSalaryInput.value);
+        
+        // Reset validation UI
+        editEmployeeForm.classList.remove('was-validated');
 
-        if (isNaN(newSalary) || newSalary <= 0) {
-            showToast("Please enter a valid salary amount.", "error");
+        const empId = editEmpIdInput.value;
+        const newName = editEmpNameInput.value.trim();
+        const newSalary = parseFloat(editEmpSalaryInput.value);
+        const genderInput = document.querySelector('input[name="editEmpGender"]:checked');
+        const newGender = genderInput ? genderInput.value : null;
+
+        // Validation
+        if (!editEmployeeForm.checkValidity()) {
+            editEmployeeForm.classList.add('was-validated');
             return;
         }
 
         const empIndex = employees.findIndex(emp => emp.id === empId);
         if (empIndex !== -1) {
+            employees[empIndex].name = newName;
             employees[empIndex].salary = newSalary;
-            showToast(`Updated salary for ${employees[empIndex].name} to $${newSalary.toLocaleString()}`, 'success');
-            editSalaryModal.hide();
+            employees[empIndex].gender = newGender;
+            
+            showToast(`Updated details for ${newName}`, 'success');
+            editEmployeeModal.hide();
             renderEmployees();
         }
     });
@@ -137,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-2">
-                            <button class="btn-action btn-edit" onclick="window.prepareEditSalary('${emp.id}')" title="Edit Salary">
-                                <i class="fas fa-edit"></i>
+                            <button class="btn-action btn-edit" onclick="window.prepareEditEmployee('${emp.id}')" title="Edit Employee">
+                                <i class="fas fa-user-edit"></i>
                             </button>
                             <button class="btn-action btn-delete" onclick="window.deleteEmployee('${emp.id}')" title="Delete Employee">
                                 <i class="fas fa-trash-can"></i>
@@ -154,13 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 🏗️ 5.1 Global Action Handlers (Exposure for Click Events)
-    window.prepareEditSalary = (id) => {
+    window.prepareEditEmployee = (id) => {
         const emp = employees.find(e => e.id === id);
         if (emp) {
+            editEmployeeForm.classList.remove('was-validated');
             editEmpIdInput.value = emp.id;
-            editEmpNameDisplay.textContent = emp.name;
+            editEmpNameInput.value = emp.name;
             editEmpSalaryInput.value = emp.salary;
-            editSalaryModal.show();
+            
+            // Set radio button
+            const genderRadio = document.querySelector(`input[name="editEmpGender"][value="${emp.gender}"]`);
+            if (genderRadio) genderRadio.checked = true;
+
+            editEmployeeModal.show();
         }
     };
 

@@ -183,24 +183,50 @@
       <div class="modal-content border-0 shadow-lg">
         <div class="modal-header bg-primary text-white border-0">
           <h5 class="modal-title h6" id="editSalaryModalLabel">
-            <i class="fas fa-edit me-2"></i>Update Employee Salary
+            <i class="fas fa-user-edit me-2"></i>Update Employee Details
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
-          <form id="editSalaryForm">
+          <form id="editEmployeeForm" class="needs-validation" novalidate>
             <input type="hidden" id="editEmpId">
+            
             <div class="mb-3">
-              <label class="form-label text-muted small text-uppercase fw-bold">Employee</label>
-              <div id="editEmpNameDisplay" class="fw-bold fs-5"></div>
+              <label for="editEmpName" class="form-label text-muted small text-uppercase fw-bold text-muted small text-uppercase fw-bold">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                <input type="text" class="form-control form-control-custom" id="editEmpName" required>
+                <div class="invalid-feedback">Employee name is required.</div>
+              </div>
             </div>
+
             <div class="mb-3">
-              <label for="editEmpSalary" class="form-label">New Monthly Salary (USD)</label>
+              <label for="editEmpSalary" class="form-label text-muted small text-uppercase fw-bold">Monthly Salary (USD)</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-dollar-sign text-muted"></i></span>
                 <input type="number" class="form-control form-control-custom" id="editEmpSalary" min="1" required>
+                <div class="invalid-feedback">A positive salary is required.</div>
               </div>
             </div>
+
+            <div class="mb-4">
+              <label class="form-label text-muted small text-uppercase fw-bold">Gender</label>
+              <div class="d-flex gap-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="editEmpGender" id="editGenderMale" value="Male" required>
+                  <label class="form-check-label" for="editGenderMale">Male</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="editEmpGender" id="editGenderFemale" value="Female">
+                  <label class="form-check-label" for="editGenderFemale">Female</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="editEmpGender" id="editGenderOther" value="Other">
+                  <label class="form-check-label" for="editGenderOther">Other</label>
+                </div>
+              </div>
+            </div>
+
             <div class="d-grid mt-4">
               <button type="submit" class="btn btn-primary btn-primary-custom text-white">
                 Save Changes
